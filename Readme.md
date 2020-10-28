@@ -97,7 +97,7 @@ export PATH=$PATH:$ARCHDIR
 ```
 - Login and Logout
 
-Add these two lines below
+Type these two lines below and run them in Terminal
 ```
 sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
 ```
@@ -108,6 +108,7 @@ Login and Logout (close the terminal and again open it)
 
 **Go to the test folder in nachos directory and then run gmake command**
 You should see something like this
+
 ![mips](ReadmeImages/mips.gif)
 
 After running this command you should see bunch of *.coff and *.c files.
