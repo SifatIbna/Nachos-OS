@@ -1,0 +1,31 @@
+#include "stdio.h"
+#include "stdlib.h"
+
+int main(int argc, char** argv)
+{
+    int i, j;
+
+    char buf[30];
+
+    
+    printf("Hello o world %s\n", buf);
+    
+    for(i = 0; i < 10; i++) {
+        for(j = 0; j < i; j++) {
+            printf("*");
+        }
+        printf("\n");
+    }
+    
+    printf("\n");
+    
+    getc(0);
+    
+    readline(buf, 30);
+    
+    printf("%stty\n", buf);
+
+    halt();
+    
+    return 0;
+}
