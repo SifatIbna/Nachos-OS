@@ -79,3 +79,35 @@ You should see something like this -
 ![nachos](ReadmeImages/nachos.png)
 
 Congratulations! you've finished downloading and installing Nachos.
+
+## Installing Cross Compile MIPS
+
+To run nachos os , we need a cross compiler. In order to install cross compiler you have to do this following steps
+
+- Download the cross compiler from https://inst.eecs.berkeley.edu/~cs162/fa13/Nachos/xgcc.html (download the Fall 2013,24MB file)
+- Extract the mips compile file.
+- Add the unzipped directory path to ARCHDIR and PATH. To do so, open /etc/profile
+```
+sudo nano /etc/profile
+```
+- Write down these two lines:
+```
+export ARCHDIR=path_to_mips_unzipped_directory
+export PATH=$PATH:$ARCHDIR
+```
+- Login and Logout
+
+Add these two lines below
+```
+sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+```
+```
+sudo ln -s /usr/lib/x86_64-linux-gnu/libgmp.so.10 /usr/lib/x86_64-linux-gnu/libgmp.so.3
+```
+Login and Logout (close the terminal and again open it)
+
+**Go to the test folder in nachos directory and then run gmake command**
+You should see something like this
+![mips](ReadmeImages/mips.gif)
+
+After running this command you should see bunch of *.coff and *.c files.
