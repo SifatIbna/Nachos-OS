@@ -57,6 +57,7 @@ public class KThread {
 
 	    createIdleThread();
 	}
+
     }
 
     /**
@@ -193,7 +194,12 @@ public class KThread {
 
 
 	currentThread.status = statusFinished;
-	
+
+	if(currentThread.parent != null)
+	{
+		currentThread.parent.ready();
+	}
+
 	sleep();
     }
 
@@ -254,12 +260,14 @@ public class KThread {
      * ready queue.
      */
     public void ready() {
+
 	Lib.debug(dbgThread, "Ready thread: " + toString());
 	
 	Lib.assertTrue(Machine.interrupt().disabled());
 	Lib.assertTrue(status != statusReady);
 	
 	status = statusReady;
+
 	if (this != idleThread)
 	    readyQueue.waitForAccess(this);
 	
@@ -276,6 +284,14 @@ public class KThread {
 	Lib.debug(dbgThread, "Joining to thread: " + toString());
 
 	Lib.assertTrue(this != currentThread);
+
+		boolean bool = Machine.interrupt().disable();
+		if(this.status != statusFinished)
+		{
+			this.parent = currentThread;
+			currentThread.sleep();
+		}
+		Machine.interrupt().restore(bool);
 
     }
 
@@ -329,7 +345,7 @@ public class KThread {
      * changed from running to blocked or ready (depending on whether the
      * thread is sleeping or yielding).
      *
-     * @param	finishing	<tt>true</tt> if the current thread is
+     * @paramfinishing <tt>true</tt> if the current thread is
      *				finished, and should be destroyed by the new
      *				thread.
      */
@@ -444,4 +460,6 @@ public class KThread {
     private static KThread currentThread = null;
     private static KThread toBeDestroyed = null;
     private static KThread idleThread = null;
+
+	private KThread parent = null;
 }
