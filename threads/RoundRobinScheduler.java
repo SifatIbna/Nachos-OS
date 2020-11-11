@@ -72,7 +72,6 @@ public class RoundRobinScheduler extends Scheduler {
 	/**
 	 * Print out the contents of the queue.
 	 */
-
 	public void print() {
 	    Lib.assertTrue(Machine.interrupt().disabled());
 

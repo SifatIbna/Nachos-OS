@@ -36,29 +36,30 @@ public class Alarm {
 
         long currTime = Machine.timer().getTime();
 
-/*        Iterator iterator = threadMap.entrySet().iterator();
+//        Iterator iterator = threadMap.entrySet().iterator();
+//
+//        while (iterator.hasNext())
+//        {
+//            Map.Entry<KThread, Long> item = (Map.Entry<KThread, Long>)iterator.next();
+//            KThread currT = item.getKey();
+//            if(threadMap.get(currT) <= currTime)
+//            {
+//                currT.ready();
+//                iterator.remove();
+//            }
+//        }
 
-        while (iterator.hasNext())
-        {
-            Map.Entry<KThread, Long> item = (Map.Entry<KThread, Long>)iterator.next();
-            KThread currT = item.getKey();
-            if(threadMap.get(currT) <= currTime)
-            {
-                currT.ready();
-                iterator.remove();
-            }
-        }
 
- */
 
-        for (Map.Entry<KThread, Long> entry : threadMap.entrySet()) {
-            KThread thread = entry.getKey();
-            Long value = entry.getValue();
+         for (Map.Entry<KThread, Long> entry : threadMap.entrySet()) {
+             KThread thread = entry.getKey();
+             Long value = entry.getValue();
 
-            if (value <= currTime){
-                thread.ready();
-            }
-        }
+             if (value <= currTime){
+                 thread.ready();
+                 threadMap.remove(thread);
+             }
+         }
 
 	    KThread.yield();
     }
@@ -89,22 +90,23 @@ public class Alarm {
             long wakeTime = Machine.timer().getTime() + x;
 //            System.out.println(wakeTime);
             Machine.interrupt().setStatus(false);
-            KThread currT = KThread.currentThread();
-            threadMap.put(currT, wakeTime);
-            KThread.sleep();
+            KThread currentThread = KThread.currentThread();
+            threadMap.put(currentThread, wakeTime);
+            currentThread.sleep();
             Machine.interrupt().restore(true);
         }
 
     }
 
     public static void alarmTest() {
-        int [] times  = {5, 50*100, 500*1000};
+        int [] times  = {1, 10*100, 100*1000};
 
         long initialTime, finishTime;
 
         for (int d : times) {
             initialTime = Machine.timer().getTime();
-            new Alarm().waitUntil(d);
+            // new Alarm().waitUntil(d); // Doesn't Work
+            ThreadedKernel.alarm.waitUntil(d);
             finishTime = Machine.timer().getTime();
             System.out.println ("Waiting for " + (finishTime - initialTime) + " ticks");
         }
