@@ -36,21 +36,6 @@ public class Alarm {
 
         long currTime = Machine.timer().getTime();
 
-//        Iterator iterator = threadMap.entrySet().iterator();
-//
-//        while (iterator.hasNext())
-//        {
-//            Map.Entry<KThread, Long> item = (Map.Entry<KThread, Long>)iterator.next();
-//            KThread currT = item.getKey();
-//            if(threadMap.get(currT) <= currTime)
-//            {
-//                currT.ready();
-//                iterator.remove();
-//            }
-//        }
-
-
-
          for (Map.Entry<KThread, Long> entry : threadMap.entrySet()) {
              KThread thread = entry.getKey();
              Long value = entry.getValue();
