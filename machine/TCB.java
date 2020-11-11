@@ -38,8 +38,10 @@ public final class TCB {
      *				machine.
      */
     public static void givePrivilege(Privilege privilege) {
+
 	TCB.privilege = privilege;
 	privilege.tcb = new TCBPrivilege();
+
     }
     
     /**
@@ -61,6 +63,7 @@ public final class TCB {
 	 * use javaThread as a reliable indicator of whether or not start() has
 	 * already been invoked.
 	 */
+
 	Lib.assertTrue(javaThread == null && !done);
 
 	/* Make sure there aren't too many running TCBs already. This
@@ -122,6 +125,7 @@ public final class TCB {
     /**
      * Return the TCB of the currently running thread.
      */
+
     public static TCB currentTCB() {
 	return currentTCB;
     }
@@ -132,6 +136,7 @@ public final class TCB {
      * current TCB.
      */
     public void contextSwitch() {
+
 	/* Probably unnecessary sanity check: we make sure that the current
 	 * thread is bound to the current TCB. This check can only fail if
 	 * non-Nachos threads invoke start().
@@ -160,6 +165,7 @@ public final class TCB {
 	
 	this.interrupt();
 	previous.yield();
+
     }
     
     /**
@@ -167,6 +173,7 @@ public final class TCB {
      * This TCB must also have been authorized to be destroyed by the
      * autograder.
      */
+
     public void destroy() {
 	// make sure the current TCB is correct
 	Lib.assertTrue(currentTCB != null &&
@@ -359,6 +366,7 @@ public final class TCB {
      * TCB objects in <tt>runningThreads</tt> to zero, Nachos exits, so once
      * the first TCB is created, this vector is basically never empty.
      */
+
     private static Vector<TCB> runningThreads = new Vector<TCB>();
     
     private static Privilege privilege;
@@ -388,6 +396,7 @@ public final class TCB {
      * destroying a TCB, this is temporarily true for a thread other than that
      * of the current TCB.
      */
+
     private boolean running = false;
 
     /**

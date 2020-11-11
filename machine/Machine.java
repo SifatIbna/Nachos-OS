@@ -39,6 +39,7 @@ public final class Machine {
 	if (testDirectoryName != null) {
 	    testDirectory = new File(testDirectoryName);
 	}
+	
 	else {
 	    // use ../test
 	    testDirectory = new File(baseDirectory.getParentFile(), "test");
@@ -114,6 +115,7 @@ public final class Machine {
     }
 
     private static void processArgs() {
+
 	for (int i=0; i<args.length; ) {
 	    String arg = args[i++];
 	    if (arg.length() > 0 && arg.charAt(0) == '-') {
