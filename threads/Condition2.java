@@ -36,8 +36,7 @@ public class Condition2 {
      */
     public void sleep() {
 	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-        boolean bool = Machine.interrupt().disable();
-
+	    Machine.interrupt().setStatus(false);
         conditionLock.release();
 
         waitQueue.add(KThread.currentThread());
@@ -45,7 +44,7 @@ public class Condition2 {
 
         conditionLock.acquire();
 
-        Machine.interrupt().restore(bool);
+        Machine.interrupt().restore(true);
     }
 
     /**
@@ -55,14 +54,14 @@ public class Condition2 {
 
     public void wake() {
         Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-        boolean bool = Machine.interrupt().disable();
 
+        Machine.interrupt().setStatus(false);
         if(!waitQueue.isEmpty())
         {
             waitQueue.removeFirst().ready();
         }
 
-        Machine.interrupt().restore(bool);
+        Machine.interrupt().restore(true);
 
     }
 
@@ -82,7 +81,8 @@ public class Condition2 {
 
     }
 
-    public static void cvTest5() {
+    public static void Condition2Test() {
+
         final Lock lock = new Lock();
         final Condition2 empty = new Condition2(lock);
         final LinkedList<Integer> list = new LinkedList<>();
@@ -98,7 +98,7 @@ public class Condition2 {
 
                 while(!list.isEmpty()) {
                     // context swith for the fun of it
-                    KThread.currentThread().yield();
+                    KThread.yield();
                     System.out.println("Removed " + list.removeFirst());
                 }
                 lock.release();
@@ -112,7 +112,7 @@ public class Condition2 {
                     list.add(i);
                     System.out.println("Added " + i);
                     // context swith for the fun of it
-                    KThread.currentThread().yield();
+                    KThread.yield();
                 }
                 empty.wake();
                 lock.release();
@@ -130,9 +130,11 @@ public class Condition2 {
     }
 
     public static void selfTest() {
-        cvTest5();
+        System.out.println();
+        System.out.println("Condition 2 Test >>>>>>> ");
+        Condition2Test();
     }
 
-    private LinkedList<KThread> waitQueue;
-    private Lock conditionLock;
+    final LinkedList<KThread> waitQueue;
+    final Lock conditionLock;
 }

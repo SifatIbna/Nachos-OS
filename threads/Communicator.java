@@ -10,16 +10,25 @@ import nachos.machine.*;
  * threads can be paired off at this point.
  */
 public class Communicator {
+
+
+    final Lock lock;
+    final Condition2 speaker;
+    final Condition2 listener;
+    final Condition2 interCon;
+    private int word;
+    private boolean hasWord;
+
     /**
      * Allocate a new communicator.
      */
     public Communicator() {
 
-        myLock = new Lock();
-        speakCon = new Condition2(myLock);
-        listenCon = new Condition2(myLock);
-        returnCon = new Condition2(myLock);
-        myword = 0;
+        lock = new Lock();
+        speaker = new Condition2(lock);
+        listener = new Condition2(lock);
+        interCon = new Condition2(lock);
+        word = 0;
         hasWord = false;
 
     }
@@ -36,17 +45,19 @@ public class Communicator {
      */
     public void speak(int word) {
 
-        myLock.acquire();
+        lock.acquire();
         while(hasWord)
         {
-            speakCon.sleep();
+            speaker.sleep();
         }
-        myword = word;
+
+        this.word = word;
+        System.out.println("Word Spoken "+word);
         hasWord = true;
 
-        listenCon.wake();
-        returnCon.sleep();
-        myLock.release();
+        listener.wake();
+        interCon.sleep();
+        lock.release();
     }
 
     /**
@@ -54,66 +65,103 @@ public class Communicator {
      * the <i>word</i> that thread passed to <tt>speak()</tt>.
      *
      * @return	the integer transferred.
-     */    
+     */
+
     public int listen() {
-        myLock.acquire();
+        lock.acquire();
         while(!hasWord)
         {
-            listenCon.sleep();
+            listener.sleep();
         }
-        speakCon.wake();
-        returnCon.wake();
-        int toReturn = myword;
-        myword = 0;
+
+        speaker.wake();
+        interCon.wake();
+        int returnWord = this.word;
+        System.out.println("Word listened "+returnWord);
+        this.word = 0;
         hasWord = false;
-        myLock.release();
-        return toReturn;
+        lock.release();
+        return returnWord;
 
     }
 
 
     public static void CommTest() {
         final Communicator com = new Communicator();
-        final long times[] = new long[4];
-        final int words[] = new int[2];
+        final long []timeCount = new long[6];
+        final int []message = new int[3];
         KThread speaker1 = new KThread( new Runnable () {
             public void run() {
                 com.speak(4);
-                times[0] = Machine.timer().getTime();
+                timeCount[0] = Machine.timer().getTime();
             }
         });
         speaker1.setName("S1");
         KThread speaker2 = new KThread( new Runnable () {
             public void run() {
                 com.speak(7);
-                times[1] = Machine.timer().getTime();
+
+                timeCount[1] = Machine.timer().getTime();
             }
         });
         speaker2.setName("S2");
+
+        KThread speaker3 = new KThread( new Runnable () {
+            public void run() {
+                com.speak(8);
+
+                timeCount[2] = Machine.timer().getTime();
+            }
+        });
+        speaker2.setName("S3");
+
         KThread listener1 = new KThread( new Runnable () {
             public void run() {
-                times[2] = Machine.timer().getTime();
-                words[0] = com.listen();
+                timeCount[3] = Machine.timer().getTime();
+                message[0] = com.listen();
             }
         });
 
         listener1.setName("L1");
         KThread listener2 = new KThread( new Runnable () {
             public void run() {
-                times[3] = Machine.timer().getTime();
-                words[1] = com.listen();
+                timeCount[4] = Machine.timer().getTime();
+                message[1] = com.listen();
             }
         });
 
         listener2.setName("L2");
 
-        speaker1.fork(); speaker2.fork(); listener1.fork(); listener2.fork();
-        speaker1.join(); speaker2.join(); listener1.join(); listener2.join();
+        KThread listener3 = new KThread( new Runnable () {
+            public void run() {
+                timeCount[5] = Machine.timer().getTime();
+                message[2] = com.listen();
+            }
+        });
 
-        Lib.assertTrue(words[0] == 4, "Didn't listen back spoken word.");
-        Lib.assertTrue(words[1] == 7, "Didn't listen back spoken word.");
-        Lib.assertTrue(times[0] > times[2], "speak() returned before listen() called.");
-        Lib.assertTrue(times[1] > times[3], "speak() returned before listen() called.");
+        listener2.setName("L3");
+
+        speaker1.fork();
+        speaker2.fork();
+        speaker3.fork();
+        listener1.fork();
+        listener2.fork();
+        listener2.join();
+        listener3.fork();
+        speaker3.join();
+        speaker1.join();
+        listener1.join();
+        speaker2.join();
+        listener3.join();
+
+
+        Lib.assertTrue(message[0] == 4, "Didn't listen back spoken word.");
+        Lib.assertTrue(message[1] == 7, "Didn't listen back spoken word.");
+        Lib.assertTrue(message[2] == 8, "Didn't listen back spoken word.");
+        Lib.assertTrue(timeCount[0] > timeCount[3], "speak() returned before listen() called.");
+        Lib.assertTrue(timeCount[1] > timeCount[4], "speak() returned before listen() called.");
+        Lib.assertTrue(timeCount[2] > timeCount[5], "speak() returned before listen() called.");
+
         System.out.println("commTest successful!");
     }
 
@@ -126,10 +174,4 @@ public class Communicator {
     }
 
 
-    private Lock myLock;
-    private Condition2 speakCon;
-    private Condition2 listenCon;
-    private Condition2 returnCon;
-    private int myword;
-    private boolean hasWord;
 }

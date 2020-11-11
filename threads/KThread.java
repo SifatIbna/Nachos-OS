@@ -2,6 +2,7 @@ package nachos.threads;
 
 import nachos.machine.*;
 
+
 /**
  * A KThread is a thread that can be used to execute Nachos kernel code. Nachos
  * allows multiple threads to run concurrently.
@@ -43,11 +44,14 @@ public class KThread {
      * create an idle thread as well.
      */
     public KThread() {
+
 	if (currentThread != null) {
 	    tcb = new TCB();
-	}	    
+	}
+
 	else {
 	    readyQueue = ThreadedKernel.scheduler.newThreadQueue(false);
+//		System.out.println("Current Thread");
 	    readyQueue.acquire(this);	    
 
 	    currentThread = this;
@@ -158,6 +162,7 @@ public class KThread {
 
     private void runThread() {
 	begin();
+
 	target.run();
 	finish();
     }
@@ -195,9 +200,9 @@ public class KThread {
 
 	currentThread.status = statusFinished;
 
-	if(currentThread.parent != null)
+	if(currentThread.previous != null)
 	{
-		currentThread.parent.ready();
+		currentThread.previous.ready();
 	}
 
 	sleep();
@@ -244,6 +249,7 @@ public class KThread {
      * so that it can be rescheduled. Otherwise, <tt>finish()</tt> should have
      * scheduled this thread to be destroyed by the next thread to run.
      */
+
     public static void sleep() {
 	Lib.debug(dbgThread, "Sleeping thread: " + currentThread.toString());
 	
@@ -280,19 +286,22 @@ public class KThread {
      * call is not guaranteed to return. This thread must not be the current
      * thread.
      */
+
     public void join() {
+
 	Lib.debug(dbgThread, "Joining to thread: " + toString());
 
 	Lib.assertTrue(this != currentThread);
 
-		boolean bool = Machine.interrupt().disable();
-		if(this.status != statusFinished)
+		Machine.interrupt().setStatus(false);
+
+		if(this.status <= statusRunning)
 		{
-			this.parent = currentThread;
+			this.previous = currentThread;
 			currentThread.sleep();
 		}
-		Machine.interrupt().restore(bool);
 
+		Machine.interrupt().setStatus(true);
     }
 
     /**
@@ -304,6 +313,7 @@ public class KThread {
      * <p>
      * Note that <tt>ready()</tt> never adds the idle thread to the ready set.
      */
+
     private static void createIdleThread() {
 	Lib.assertTrue(idleThread == null);
 	
@@ -370,6 +380,7 @@ public class KThread {
      * Prepare this thread to be run. Set <tt>status</tt> to
      * <tt>statusRunning</tt> and check <tt>toBeDestroyed</tt>.
      */
+
     protected void restoreState() {
 	Lib.debug(dbgThread, "Running thread: " + currentThread.toString());
 	
@@ -399,11 +410,14 @@ public class KThread {
 
     private static class PingTest implements Runnable {
 	PingTest(int which) {
+
 	    this.which = which;
+
 	}
 	
 	public void run() {
 	    for (int i=0; i<5; i++) {
+
 		System.out.println("*** thread " + which + " looped "
 				   + i + " times");
 		currentThread.yield();
@@ -413,14 +427,45 @@ public class KThread {
 	private int which;
     }
 
+
+
+
     /**
      * Tests whether this module is working.
      */
     public static void selfTest() {
 	Lib.debug(dbgThread, "Enter KThread.selfTest");
 	
-	new KThread(new PingTest(1)).setName("forked thread").fork();
-	new PingTest(0).run();
+//	new KThread(new PingTest(1)).setName("forked thread").fork();
+//	new PingTest(0).run();
+
+		System.out.println("Testing Join Test >>>");
+
+		KThread t0 = new KThread(new PingTest(0)).setName("Forked thread 0");
+		System.out.println("Forked thread  0 and Joining");
+		t0.fork();
+		t0.join();
+		System.out.println("Joined with thread 0");
+
+		System.out.println();
+		new KThread(new PingTest(1)).setName("Forked thread 1").fork();
+		new KThread(new PingTest(2)).setName("Forked thread 2").fork();
+		new KThread(new PingTest(3)).setName("Forked thread 3").fork();
+		new PingTest(0).run();
+
+		System.out.println();
+
+		KThread t1 = new KThread(new PingTest(1)).setName("Forked thread 1");
+		KThread t2 = new KThread(new PingTest(2)).setName("Forked thread 2");
+
+		t1.fork();
+		t2.fork();
+
+		t1.join();
+		t2.join();
+
+		System.out.println();
+
     }
 
     private static final char dbgThread = 't';
@@ -461,5 +506,5 @@ public class KThread {
     private static KThread toBeDestroyed = null;
     private static KThread idleThread = null;
 
-	private KThread parent = null;
+	private KThread previous = null;
 }

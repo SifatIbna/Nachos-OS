@@ -20,9 +20,10 @@ public class Alarm {
      */
     public Alarm() {
         threadMap = new HashMap<KThread, Long>();
-	Machine.timer().setInterruptHandler(new Runnable() {
-		public void run() { timerInterrupt(); }
-	    });
+
+        Machine.timer().setInterruptHandler(new Runnable() {
+            public void run() { timerInterrupt(); }
+        });
     }
 
     /**
@@ -34,19 +35,32 @@ public class Alarm {
     public void timerInterrupt() {
 
         long currTime = Machine.timer().getTime();
-        Iterator it = threadMap.entrySet().iterator();
-        while (it.hasNext())
+
+/*        Iterator iterator = threadMap.entrySet().iterator();
+
+        while (iterator.hasNext())
         {
-            Map.Entry<KThread, Long> item = (Map.Entry<KThread, Long>)it.next();
+            Map.Entry<KThread, Long> item = (Map.Entry<KThread, Long>)iterator.next();
             KThread currT = item.getKey();
             if(threadMap.get(currT) <= currTime)
             {
                 currT.ready();
-                it.remove();
+                iterator.remove();
             }
         }
 
-	    KThread.currentThread().yield();
+ */
+
+        for (Map.Entry<KThread, Long> entry : threadMap.entrySet()) {
+            KThread thread = entry.getKey();
+            Long value = entry.getValue();
+
+            if (value <= currTime){
+                thread.ready();
+            }
+        }
+
+	    KThread.yield();
     }
 
     /**
@@ -64,7 +78,7 @@ public class Alarm {
      * @see	nachos.machine.Timer#getTime()
      */
     public void waitUntil(long x) {
-        // for now, cheat just to get something working (busy waiting is bad)
+
         //long wakeTime = Machine.timer().getTime() + x;
         //while (wakeTime > Machine.timer().getTime())
         //	KThread.yield();
@@ -73,26 +87,26 @@ public class Alarm {
         if(x > 0)
         {
             long wakeTime = Machine.timer().getTime() + x;
-            boolean bool = Machine.interrupt().disable();
+//            System.out.println(wakeTime);
+            Machine.interrupt().setStatus(false);
             KThread currT = KThread.currentThread();
             threadMap.put(currT, wakeTime);
-            // use sleep instead of yield in order to prevent busy waiting
-            currT.sleep();
-
-            Machine.interrupt().restore(bool);
+            KThread.sleep();
+            Machine.interrupt().restore(true);
         }
 
     }
 
     public static void alarmTest() {
-        int durations[] = {1000, 10*1000, 100*1000};
-        long t0, t1;
+        int [] times  = {5, 50*100, 500*1000};
 
-        for (int d : durations) {
-            t0 = Machine.timer().getTime();
-            ThreadedKernel.alarm.waitUntil (d);
-            t1 = Machine.timer().getTime();
-            System.out.println ("alarmTest: waited for " + (t1 - t0) + " ticks");
+        long initialTime, finishTime;
+
+        for (int d : times) {
+            initialTime = Machine.timer().getTime();
+            new Alarm().waitUntil(d);
+            finishTime = Machine.timer().getTime();
+            System.out.println ("Waiting for " + (finishTime - initialTime) + " ticks");
         }
     }
 
@@ -103,5 +117,5 @@ public class Alarm {
         // Invoke your other test methods here ...
     }
 
-    private HashMap<KThread, Long> threadMap;
+    final HashMap<KThread, Long> threadMap;
 }
