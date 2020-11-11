@@ -92,14 +92,14 @@ public class Communicator {
         final int []message = new int[3];
         KThread speaker1 = new KThread( new Runnable () {
             public void run() {
-                com.speak(4);
+                com.speak(1);
                 timeCount[0] = Machine.timer().getTime();
             }
         });
         speaker1.setName("S1");
         KThread speaker2 = new KThread( new Runnable () {
             public void run() {
-                com.speak(7);
+                com.speak(2);
 
                 timeCount[1] = Machine.timer().getTime();
             }
@@ -108,7 +108,7 @@ public class Communicator {
 
         KThread speaker3 = new KThread( new Runnable () {
             public void run() {
-                com.speak(8);
+                com.speak(3);
 
                 timeCount[2] = Machine.timer().getTime();
             }
@@ -155,9 +155,9 @@ public class Communicator {
         listener3.join();
 
 
-        Lib.assertTrue(message[0] == 4, "Didn't listen back spoken word.");
-        Lib.assertTrue(message[1] == 7, "Didn't listen back spoken word.");
-        Lib.assertTrue(message[2] == 8, "Didn't listen back spoken word.");
+        Lib.assertTrue(message[0] == 1, "Didn't listen back spoken word.");
+        Lib.assertTrue(message[1] == 2, "Didn't listen back spoken word.");
+        Lib.assertTrue(message[2] == 3, "Didn't listen back spoken word.");
         Lib.assertTrue(timeCount[0] > timeCount[3], "speak() returned before listen() called.");
         Lib.assertTrue(timeCount[1] > timeCount[4], "speak() returned before listen() called.");
         Lib.assertTrue(timeCount[2] > timeCount[5], "speak() returned before listen() called.");
