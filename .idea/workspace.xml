@@ -2,50 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9380e3b0-5588-4578-986c-d4bfac05d5f3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nachos.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nachos.iml" beforeDir="false" afterPath="$PROJECT_DIR$/nachos.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proj2/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/proj2/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proj2/nachos.conf" beforeDir="false" afterPath="$PROJECT_DIR$/proj2/nachos.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/test/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/assert.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/assert.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/atoi.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/atoi.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/cat.coff" beforeDir="false" afterPath="$PROJECT_DIR$/test/cat.coff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/cat.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/cat.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/cp.coff" beforeDir="false" afterPath="$PROJECT_DIR$/test/cp.coff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/cp.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/cp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/echo.c" beforeDir="false" afterPath="$PROJECT_DIR$/test/echo.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/echo.coff" beforeDir="false" afterPath="$PROJECT_DIR$/test/echo.coff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/echo.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/echo.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/halt.c" beforeDir="false" afterPath="$PROJECT_DIR$/test/halt.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/halt.coff" beforeDir="false" afterPath="$PROJECT_DIR$/test/halt.coff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/halt.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/halt.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/libnachos.a" beforeDir="false" afterPath="$PROJECT_DIR$/test/libnachos.a" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/matmult.coff" beforeDir="false" afterPath="$PROJECT_DIR$/test/matmult.coff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/matmult.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/matmult.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/memcpy.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/memcpy.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/memset.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/memset.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/mv.coff" beforeDir="false" afterPath="$PROJECT_DIR$/test/mv.coff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/mv.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/mv.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/printf.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/printf.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/readline.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/readline.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/rm.coff" beforeDir="false" afterPath="$PROJECT_DIR$/test/rm.coff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/rm.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/rm.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/script" beforeDir="false" afterPath="$PROJECT_DIR$/test/script" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/sh.coff" beforeDir="false" afterPath="$PROJECT_DIR$/test/sh.coff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/sh.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/sh.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/sort.coff" beforeDir="false" afterPath="$PROJECT_DIR$/test/sort.coff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/sort.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/sort.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/start.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/start.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/stdio.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/stdio.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/strcat.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/strcat.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/strcmp.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/strcmp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/strcpy.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/strcpy.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/strlen.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/strlen.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/strncmp.o" beforeDir="false" afterPath="$PROJECT_DIR$/test/strncmp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/va-mips.h" beforeDir="false" afterPath="$PROJECT_DIR$/test/va-mips.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,13 +33,13 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/proj2" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="terminal" />
+    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -84,6 +51,7 @@
     <configuration name="Machine" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="nachos.machine.Machine" />
       <module name="nachos" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/proj2" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="nachos.machine.*" />
@@ -111,37 +79,61 @@
       <option name="presentableId" value="Default" />
       <updated>1603136617546</updated>
       <workItem from="1603136618938" duration="739000" />
-      <workItem from="1605068956297" duration="3130000" />
+      <workItem from="1605068956297" duration="11249000" />
     </task>
+    <task id="LOCAL-00001" summary="working">
+      <created>1605074047288</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1605074047288</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="working" />
+    <option name="LAST_COMMIT_MESSAGE" value="working" />
+  </component>
   <component name="WindowStateProjectService">
-    <state x="520" y="106" key="FileChooserDialogImpl" timestamp="1605071153598">
+    <state x="223" y="87" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1605090080724">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="520" y="106" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1605071153598" />
-    <state width="1493" height="347" key="GridCell.Tab.0.bottom" timestamp="1605073712750">
+    <state x="223" y="87" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.864@0.0.1536.864" timestamp="1605090080724" />
+    <state x="533" y="235" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1605091394514">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="347" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1605073712750" />
-    <state width="1493" height="347" key="GridCell.Tab.0.center" timestamp="1605073712750">
+    <state x="533" y="235" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.864@0.0.1536.864" timestamp="1605091394514" />
+    <state x="312" y="22" key="CommitChangelistDialog2" timestamp="1605092591019">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="347" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1605073712750" />
-    <state width="1493" height="347" key="GridCell.Tab.0.left" timestamp="1605073712749">
+    <state x="312" y="22" key="CommitChangelistDialog2/0.0.1536.864@0.0.1536.864" timestamp="1605092591019" />
+    <state x="520" y="106" key="FileChooserDialogImpl" timestamp="1605090078036">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="347" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1605073712749" />
-    <state width="1493" height="347" key="GridCell.Tab.0.right" timestamp="1605073712750">
+    <state x="520" y="106" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1605090078036" />
+    <state width="1493" height="275" key="GridCell.Tab.0.bottom" timestamp="1605092591051">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="347" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1605073712750" />
-    <state x="249" y="7" key="SettingsEditor" timestamp="1605072974988">
+    <state width="1493" height="275" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1605092591051" />
+    <state width="1493" height="275" key="GridCell.Tab.0.center" timestamp="1605092591051">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="249" y="7" key="SettingsEditor/0.0.1536.864@0.0.1536.864" timestamp="1605072974988" />
+    <state width="1493" height="275" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1605092591051" />
+    <state width="1493" height="275" key="GridCell.Tab.0.left" timestamp="1605092591051">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="275" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1605092591051" />
+    <state width="1493" height="275" key="GridCell.Tab.0.right" timestamp="1605092591051">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="275" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1605092591051" />
+    <state x="249" y="7" key="SettingsEditor" timestamp="1605077099290">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="249" y="7" key="SettingsEditor/0.0.1536.864@0.0.1536.864" timestamp="1605077099290" />
   </component>
 </project>
