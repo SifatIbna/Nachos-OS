@@ -18,7 +18,7 @@ public final class TranslationEntry {
     /**
      * Allocate a new translation entry with the specified initial state.
      *
-     * @param	vpn		the virtual page numben.
+     * @param	vpn		the virtual page number.
      * @param	ppn		the physical page number.
      * @param	valid		the valid bit.
      * @param	readOnly	the read-only bit.
