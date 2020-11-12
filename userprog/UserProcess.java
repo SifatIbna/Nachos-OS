@@ -19,7 +19,12 @@ import java.io.EOFException;
  * @see	nachos.network.NetProcess
  */
 public class UserProcess {
-    /**
+	protected OpenFile stdout;
+	protected OpenFile stdin;
+	protected OpenFile[] descriptors;
+	private final int descriptorSize = 8;
+
+	/**
      * Allocate a new process.
      */
     public UserProcess() {
@@ -27,7 +32,18 @@ public class UserProcess {
 	pageTable = new TranslationEntry[numPhysPages];
 	for (int i=0; i<numPhysPages; i++)
 	    pageTable[i] = new TranslationEntry(i,i, true,false,false,false);
+
+		descriptors=new OpenFile[descriptorSize];
+		boolean intrpt = Machine.interrupt().disable();
+		stdin = UserKernel.console.openForReading();
+		stdout = UserKernel.console.openForWriting();
+		descriptors[0]=stdin;
+		descriptors[1]=stdout;
+		Machine.interrupt().restore(intrpt);
+
     }
+
+
     
     /**
      * Allocate and return a new process of the correct class. The class name
@@ -370,7 +386,7 @@ public class UserProcess {
      * <tr><td>2</td><td><tt>int  exec(char *name, int argc, char **argv);
      * 								</tt></td></tr>
      * <tr><td>3</td><td><tt>int  join(int pid, int *status);</tt></td></tr>
-     * <tr><td>4</td><td><tt>int  creat(char *name);</tt></td></tr>
+     * <tr><td>4</td><td><tt>int  creat(cha r *name);</tt></td></tr>
      * <tr><td>5</td><td><tt>int  open(char *name);</tt></td></tr>
      * <tr><td>6</td><td><tt>int  read(int fd, char *buffer, int size);
      *								</tt></td></tr>
@@ -391,6 +407,11 @@ public class UserProcess {
 	switch (syscall) {
 	case syscallHalt:
 	    return handleHalt();
+		case syscallRead:
+			return handleRead(a0, a1, a2);
+
+		case syscallWrite:
+			return handleWrite(a0, a1, a2);
 
 
 	default:
@@ -400,7 +421,65 @@ public class UserProcess {
 	return 0;
     }
 
-    /**
+	private int handleWrite(int descriptorIndex, int offset, int size) {
+		if(size<0){
+			Lib.debug(dbgProcess, "Error in function handleWrite() - Size is negative");
+			return -1;
+		}
+		else if(descriptorIndex<0||descriptorIndex>descriptorSize-1){
+			Lib.debug(dbgProcess, "Error in function handleWrite() - Descriptor value > descriptor array length");
+			return -1;
+		}
+		OpenFile writeFile;
+		if(descriptors[descriptorIndex]==null){
+			Lib.debug(dbgProcess, "Error in function handleWrite() - File doesn't exist in the descriptor table");
+			return -1;
+		}
+
+		writeFile=descriptors[descriptorIndex];
+
+		int length=0;
+		byte[] writer=new byte[size];
+		length=readVirtualMemory(offset,writer,0,size);
+		int count=0;
+		count=writeFile.write(writer, 0, length);
+		if(count==-1){
+			Lib.debug(dbgProcess, "Error in function handleWrite() - Unknown Error occurred while writing file");
+			return -1;
+		}
+		return count;
+	}
+
+	private int handleRead(int descriptorIndex, int offset, int size) {
+		if(size<0){
+			Lib.debug(dbgProcess, "Error in function handleRead - Size is negative");
+			return -1;
+		}
+		else if(descriptorIndex<0||descriptorIndex>descriptorSize-1){
+			Lib.debug(dbgProcess, "Error in function handleRead - Descriptor value > descriptor array length");
+			return -1;
+		}
+		OpenFile readFile;
+		if(descriptors[descriptorIndex]==null){
+			Lib.debug(dbgProcess, "Error in function handleRead - File doesn't exist in the descriptor table");
+			return -1;
+		}
+
+		readFile=descriptors[descriptorIndex];
+
+		int length=0;
+		byte[] reader=new byte[size];
+		length=readFile.read(reader, 0, size);
+		if(length==-1){
+			Lib.debug(dbgProcess, "Error in function handleRead - Unknown Error occurred while reading file");
+			return -1;
+		}
+		int count=0;
+		count=writeVirtualMemory(offset,reader,0,length);
+		return count;
+	}
+
+	/**
      * Handle a user exception. Called by
      * <tt>UserKernel.exceptionHandler()</tt>. The
      * <i>cause</i> argument identifies which exception occurred; see the
@@ -446,4 +525,5 @@ public class UserProcess {
 	
     private static final int pageSize = Processor.pageSize;
     private static final char dbgProcess = 'a';
+
 }

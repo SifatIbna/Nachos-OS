@@ -27,7 +27,7 @@ public class Alarm {
      * that should be run.
      */
     public void timerInterrupt() {
-	KThread.currentThread().yield();
+	    KThread.currentThread().yield();
     }
 
     /**
