@@ -28,12 +28,12 @@ public class UserProcess {
     private final int descriptorSize = 8;
     protected UserProcess parent;
     protected List<UserProcess> children;
-    protected final Map<Integer, Integer> childrenExitStatus;
+    protected final Hashtable<Integer, Integer> childrenExitStatus;
     protected Lock statusLock;
-    protected  Lock counterLock;
+    protected Lock counterLock;
     protected int pID;
     protected static AtomicInteger counter = new AtomicInteger();
-
+    protected UThread thread;
 
 
     /**
@@ -52,8 +52,8 @@ public class UserProcess {
         descriptors[0] = stdin;
         descriptors[1] = stdout;
         Machine.interrupt().restore(intrpt);
-        childrenExitStatus = Collections.synchronizedMap(new HashMap<Integer, Integer>());
-//		childrenExitStatus = new ConcurrentHashMap<Integer, Integer>();
+//        childrenExitStatus = Collections.synchronizedMap(new HashMap<Integer, Integer>());
+        childrenExitStatus = new Hashtable<Integer, Integer>();
         children = new ArrayList<UserProcess>();
 
         statusLock = new Lock();
@@ -250,39 +250,39 @@ public class UserProcess {
 
         int amount = Math.min(length, memory.length - vaddr);
 
-		int i1 = 0;
-		int endVAddr = vaddr + length - 1;
-		int stVPage = Processor.pageFromAddress(vaddr);
-		int endVPage = Processor.pageFromAddress(endVAddr);
-		for (int i = stVPage; i <= endVPage; i++) {
-			if (pageTable[i].valid && !pageTable[i].readOnly) {
-				int pageStartVAddr = Processor.makeAddress(i, 0);
-				int pageEndVAddr = Processor.makeAddress(i, pageSize - 1);
-				int addrOffset;
-				if (vaddr > pageStartVAddr && endVAddr < pageEndVAddr) {
-					addrOffset = vaddr - pageStartVAddr;
-					amount = length;
-				} else if (vaddr > pageStartVAddr && endVAddr >= pageEndVAddr) {
-					addrOffset = vaddr - pageStartVAddr;
-					amount = pageEndVAddr - vaddr + 1;
-				} else if (vaddr <= pageStartVAddr && endVAddr < pageEndVAddr) {
-					addrOffset = 0;
-					amount = endVAddr - pageStartVAddr + 1;
-				} else {
-					addrOffset = 0;
-					amount = pageSize;
-				}
-				int paddr = Processor.makeAddress(pageTable[i].ppn, addrOffset);
-				System.arraycopy(memory, paddr, data, offset + i1, amount);
-				i1 += amount;
+        int i1 = 0;
+        int endVAddr = vaddr + length - 1;
+        int stVPage = Processor.pageFromAddress(vaddr);
+        int endVPage = Processor.pageFromAddress(endVAddr);
+        for (int i = stVPage; i <= endVPage; i++) {
+            if (pageTable[i].valid && !pageTable[i].readOnly) {
+                int pageStartVAddr = Processor.makeAddress(i, 0);
+                int pageEndVAddr = Processor.makeAddress(i, pageSize - 1);
+                int addrOffset;
+                if (vaddr > pageStartVAddr && endVAddr < pageEndVAddr) {
+                    addrOffset = vaddr - pageStartVAddr;
+                    amount = length;
+                } else if (vaddr > pageStartVAddr && endVAddr >= pageEndVAddr) {
+                    addrOffset = vaddr - pageStartVAddr;
+                    amount = pageEndVAddr - vaddr + 1;
+                } else if (vaddr <= pageStartVAddr && endVAddr < pageEndVAddr) {
+                    addrOffset = 0;
+                    amount = endVAddr - pageStartVAddr + 1;
+                } else {
+                    addrOffset = 0;
+                    amount = pageSize;
+                }
+                int paddr = Processor.makeAddress(pageTable[i].ppn, addrOffset);
+                System.arraycopy(memory, paddr, data, offset + i1, amount);
+                i1 += amount;
 //			  pageTable[i].used=true;
-			} else break;
+            } else break;
 
-		}
+        }
 
 //		System.arraycopy(memory, vaddr, data, offset, amount);
 
-		return i1;
+        return i1;
     }
 
     /**
@@ -397,11 +397,11 @@ public class UserProcess {
                 int vpn = section.getFirstVPN() + i;
 
                 // for now, just assume virtual addresses=physical addresses
-				TranslationEntry te = null;
-				if (vpn >= 0 && vpn < pageTable.length)
-					te =  pageTable[vpn];
-				if (te == null)
-					return false;
+                TranslationEntry te = null;
+                if (vpn >= 0 && vpn < pageTable.length)
+                    te = pageTable[vpn];
+                if (te == null)
+                    return false;
 //				if(section.isReadOnly()) te.readOnly = true;
                 section.loadPage(i, te.ppn);
             }
@@ -497,11 +497,14 @@ public class UserProcess {
                 return handleHalt();
             case syscallRead:
                 return handleRead(a0, a1, a2);
-
             case syscallWrite:
                 return handleWrite(a0, a1, a2);
             case syscallExit:
                 return handleExit(a0);
+            case syscallExec:
+                return handleExec(a0, a1, a2);
+            case syscallJoin:
+                return handleJoin(a0, a1);
 
 
             default:
@@ -511,12 +514,95 @@ public class UserProcess {
         return 0;
     }
 
+    private int handleExec(int vAddr, int numofPages, int startVAddr) {
+        if(vAddr<0||numofPages<0||startVAddr<0){
+            Lib.debug(dbgProcess, "Error in function handleExec - address out of range");
+            return -1;
+        }
+        String fileName=readVirtualMemoryString(vAddr, 512);
+        if(fileName==null){
+            Lib.debug(dbgProcess, "Error in function handleExec - No filename given");
+            return -1;
+        }
+        if(!fileName.contains(".coff")){
+            String [] ext = fileName.split(".");
+            Lib.debug(dbgProcess, "Error in function handleExec - unknown file type : "+ext[ext.length-1]);
+            return -1;
+        }
+        String[] pages=new String[numofPages];
+        byte[] buffer;
+        int readLength;
+        for(int i=0;i<numofPages;i++){
+            buffer=new byte[4];
+            readLength=readVirtualMemory((4*i)+startVAddr,buffer);
+            if(readLength!=4){
+                Lib.debug(dbgProcess, "Error in function handleExec - Reading Coff file failed");
+                return -1;
+            }
+            int intAddress=Lib.bytesToInt(buffer, 0);
+            String arg=readVirtualMemoryString(intAddress,256);
+            if(arg == null){
+                Lib.debug(dbgProcess, "Error in function handleExec - Reading .Coff file failed");
+                return -1;
+            }
+            pages[i]=arg;
+        }
+        UserProcess child=UserProcess.newUserProcess();
+        boolean isSuccessful=child.execute(fileName, pages);
+        if(!isSuccessful){
+            Lib.debug(dbgProcess, "handleExec:Execute child process failed");
+            return -1;
+        }
+        child.parent=this;
+        this.children.add(child);
+        return child.pID;
+    }
+
+    private int handleJoin(int callerProcessID, int vAddr) {
+        if (callerProcessID < 0 || vAddr < 0) {
+            return -1;
+        }
+        UserProcess child = null;
+        for (UserProcess process :
+                children) {
+            if (callerProcessID == process.pID) {
+                child = process;
+                break;
+            }
+        }
+
+        if (child == null) {
+            Lib.debug(dbgProcess, "Error in function handleJoin - caller is not the child of current thread");
+            return -1;
+        }
+        child.thread.join();
+
+        child.parent = null;
+        children.remove(child);
+        statusLock.acquire();
+        Integer status = childrenExitStatus.get(child.pID);
+        statusLock.release();
+        if (status == null) {
+            Lib.debug(dbgProcess, "Error in function handleJoin - child thread termination unknown");
+            return 0;
+        } else {
+            //status int 32bits
+            byte[] buffer = new byte[4];
+            buffer = Lib.bytesFromInt(status);
+            int count = writeVirtualMemory(vAddr, buffer);
+            if (count != 0x4) {
+                Lib.debug(dbgProcess, "Error in function handleJoin - child thread termination status writing error");
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+    }
+
     private int handleExit(int a0) {
         if (parent != null) {
-        	statusLock.acquire();
-            synchronized (childrenExitStatus) {
-                parent.childrenExitStatus.put(pID, a0);
-            }
+            statusLock.acquire();
+            parent.childrenExitStatus.put(pID, a0);
             statusLock.release();
         }
         unloadSections();
@@ -525,7 +611,7 @@ public class UserProcess {
             p.parent = null;
         }
         children.clear();
-//        System.out.println("Exited process : " + pID +" with Status : "+ a0);
+        Lib.debug(dbgProcess,"Exited process : " + pID + " with Status : " + a0);
 
         if (pID == 0) {
             Kernel.kernel.terminate();
