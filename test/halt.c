@@ -14,7 +14,23 @@
 
 int
 main()
-{
+
+{   
+    int i,j;
+    printf("Hello World!!\n");
+    printf("Star Printing...\n");
+    for (i = 0; i < 5; i++)
+    {
+        for (j = 0; j <=i; j++)
+        {
+            printf("*");
+        }
+        printf("\n");
+    }
+    
+    printf("Part 2 Task 1 Handle read and write complete !! :D\n");
+    
+
     halt();
     return 0; 
     /* not reached */
