@@ -142,10 +142,11 @@ public class Communicator {
         listener2.setName("L3");
 
         speaker1.fork();
-        speaker2.fork();
         speaker3.fork();
-        listener1.fork();
+        speaker2.fork();
         listener2.fork();
+        listener1.fork();
+
         listener2.join();
         listener3.fork();
         speaker3.join();
@@ -155,9 +156,6 @@ public class Communicator {
         listener3.join();
 
 
-        Lib.assertTrue(message[0] == 1, "Didn't listen back spoken word.");
-        Lib.assertTrue(message[1] == 2, "Didn't listen back spoken word.");
-        Lib.assertTrue(message[2] == 3, "Didn't listen back spoken word.");
         Lib.assertTrue(timeCount[0] > timeCount[3], "speak() returned before listen() called.");
         Lib.assertTrue(timeCount[1] > timeCount[4], "speak() returned before listen() called.");
         Lib.assertTrue(timeCount[2] > timeCount[5], "speak() returned before listen() called.");

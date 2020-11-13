@@ -3,7 +3,6 @@ package nachos.threads;
 import nachos.machine.*;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -34,13 +33,13 @@ public class Alarm {
      */
     public void timerInterrupt() {
 
-        long currTime = Machine.timer().getTime();
+        long currentTime = Machine.timer().getTime();
 
          for (Map.Entry<KThread, Long> entry : threadMap.entrySet()) {
              KThread thread = entry.getKey();
              Long value = entry.getValue();
 
-             if (value <= currTime){
+             if (value <= currentTime){
                  thread.ready();
                  threadMap.remove(thread);
              }
@@ -63,6 +62,7 @@ public class Alarm {
      *
      * @see	nachos.machine.Timer#getTime()
      */
+
     public void waitUntil(long x) {
 
         //long wakeTime = Machine.timer().getTime() + x;
@@ -84,13 +84,13 @@ public class Alarm {
     }
 
     public static void alarmTest() {
-        int [] times  = {1, 10*100, 100*1000};
+        int [] times  = {100, 10*100, 100*1000};
 
         long initialTime, finishTime;
 
         for (int d : times) {
             initialTime = Machine.timer().getTime();
-            // new Alarm().waitUntil(d); // Doesn't Work
+//             new Alarm().waitUntil(d); // Doesn't Work
             ThreadedKernel.alarm.waitUntil(d);
             finishTime = Machine.timer().getTime();
             System.out.println ("Waiting for " + (finishTime - initialTime) + " ticks");
