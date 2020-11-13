@@ -4,11 +4,18 @@ import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
 
+import java.util.LinkedList;
+
 /**
  * A kernel that can support multiple user processes.
  */
 public class UserKernel extends ThreadedKernel {
-    /**
+	private static int offsetLen;
+	private static Lock pageLock;
+	private static int offsetMask;
+	private static LinkedList<Integer> availablePages;
+
+	/**
      * Allocate a new user kernel.
      */
     public UserKernel() {
@@ -27,6 +34,16 @@ public class UserKernel extends ThreadedKernel {
 	Machine.processor().setExceptionHandler(new Runnable() {
 		public void run() { exceptionHandler(); }
 	    });
+		for (offsetLen = 0; ; offsetLen++)
+			if ((Processor.pageSize >> offsetLen) == 1) {
+				offsetMask = (1 << offsetLen) - 1;
+				break;
+			}
+		pageLock = new Lock();
+		int numPhysPages = Machine.processor().getNumPhysPages();
+		availablePages = new LinkedList<Integer>();
+		for (int i = 0; i < numPhysPages; ++i)
+			availablePages.add(i);
     }
 
     /**

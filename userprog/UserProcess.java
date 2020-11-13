@@ -29,8 +29,8 @@ public class UserProcess {
     protected UserProcess parent;
     protected List<UserProcess> children;
     protected final Hashtable<Integer, Integer> childrenExitStatus;
-    protected Lock statusLock;
-    protected Lock counterLock;
+    protected static Lock statusLock = new Lock();
+    protected static Lock counterLock = new Lock();
     protected int pID;
     protected static AtomicInteger counter = new AtomicInteger();
     protected UThread thread;
@@ -53,11 +53,11 @@ public class UserProcess {
         descriptors[1] = stdout;
         Machine.interrupt().restore(intrpt);
 //        childrenExitStatus = Collections.synchronizedMap(new HashMap<Integer, Integer>());
+        statusLock.acquire();
         childrenExitStatus = new Hashtable<Integer, Integer>();
-        children = new ArrayList<UserProcess>();
+        statusLock.release();
 
-        statusLock = new Lock();
-        counterLock = new Lock();
+        children = new ArrayList<UserProcess>();
 
         counterLock.acquire();
         pID = counter.incrementAndGet();
