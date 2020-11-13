@@ -92,6 +92,7 @@ public final class Lib {
     /**
      * Asserts that this call is never made. Same as <tt>assertTrue(false)</tt>.
      */
+
     public static void assertNotReached() {
 	assertTrue(false);
     }
