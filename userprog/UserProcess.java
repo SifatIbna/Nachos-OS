@@ -201,7 +201,6 @@ public class UserProcess {
                 int paddr = Processor.makeAddress(pageTable[i].ppn, addrOffset);
                 System.arraycopy(memory, paddr, data, offset + i1, amount);
                 i1 += amount;
-//			  pageTable[i].used=true;
             } else break;
 
         }
