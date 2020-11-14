@@ -181,6 +181,31 @@ public class UserProcess {
         int endVAddr = vaddr + length - 1;
         int stVPage = Processor.pageFromAddress(vaddr);
         int endVPage = Processor.pageFromAddress(endVAddr);
+<<<<<<< HEAD
+=======
+        for (int i = stVPage; i <= endVPage; i++) {
+            if (pageTable[i].valid) {
+                int pageStartVAddr = Processor.makeAddress(i, 0);
+                int pageEndVAddr = Processor.makeAddress(i, pageSize - 1);
+                int addrOffset;
+                if (vaddr > pageStartVAddr && endVAddr < pageEndVAddr) {
+                    addrOffset = vaddr - pageStartVAddr;
+                    amount = length;
+                } else if (vaddr > pageStartVAddr && endVAddr >= pageEndVAddr) {
+                    addrOffset = vaddr - pageStartVAddr;
+                    amount = pageEndVAddr - vaddr + 1;
+                } else if (vaddr <= pageStartVAddr && endVAddr < pageEndVAddr) {
+                    addrOffset = 0;
+                    amount = endVAddr - pageStartVAddr + 1;
+                } else {
+                    addrOffset = 0;
+                    amount = pageSize;
+                }
+                int paddr = Processor.makeAddress(pageTable[i].ppn, addrOffset);
+                System.arraycopy(memory, paddr, data, offset + i1, amount);
+                i1 += amount;
+            } else break;
+>>>>>>> 8b4b7f6e962917ca5ca192c97a6c844406208b11
 
         for (int i = vaddr; i <= endVAddr ; i+=amount) {
             stVPage = Processor.pageFromAddress(i);

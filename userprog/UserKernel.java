@@ -31,9 +31,7 @@ public class UserKernel extends ThreadedKernel {
 
 	console = new SynchConsole(Machine.console());
 	
-	Machine.processor().setExceptionHandler(new Runnable() {
-		public void run() { exceptionHandler(); }
-	    });
+	Machine.processor().setExceptionHandler(this::exceptionHandler);
 		for (offsetLen = 0; ; offsetLen++)
 			if ((Processor.pageSize >> offsetLen) == 1) {
 				offsetMask = (1 << offsetLen) - 1;
