@@ -604,6 +604,7 @@ public class UserProcess {
                 Lib.debug(dbgProcess, "Error in function handleJoin - child thread termination status writing error");
                 return 0;
             } else {
+                Lib.debug(dbgProcess, "Process with ID - "+child.pID+" Joined");
                 return 1;
             }
         }
