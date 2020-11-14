@@ -2,6 +2,8 @@ package nachos.threads;
 
 import nachos.machine.*;
 
+import java.util.LinkedList;
+
 /**
  * An implementation of condition variables that disables interrupt()s for
  * synchronization.
@@ -22,6 +24,8 @@ public class Condition2 {
      */
     public Condition2(Lock conditionLock) {
 	this.conditionLock = conditionLock;
+	this.waitQueue = new LinkedList<KThread>();
+
     }
 
     /**
@@ -32,18 +36,33 @@ public class Condition2 {
      */
     public void sleep() {
 	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+	    Machine.interrupt().setStatus(false);
+        conditionLock.release();
 
-	conditionLock.release();
+        waitQueue.add(KThread.currentThread());
+        KThread.currentThread().sleep();
 
-	conditionLock.acquire();
+        conditionLock.acquire();
+
+        Machine.interrupt().restore(true);
     }
 
     /**
      * Wake up at most one thread sleeping on this condition variable. The
      * current thread must hold the associated lock.
      */
+
     public void wake() {
-	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+        Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+
+        Machine.interrupt().setStatus(false);
+        if(!waitQueue.isEmpty())
+        {
+            waitQueue.removeFirst().ready();
+        }
+
+        Machine.interrupt().restore(true);
+
     }
 
     /**
@@ -51,8 +70,71 @@ public class Condition2 {
      * thread must hold the associated lock.
      */
     public void wakeAll() {
-	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+	    Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+
+        Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+
+        while(!waitQueue.isEmpty())
+        {
+            wake();
+        }
+
     }
 
-    private Lock conditionLock;
+    public static void Condition2Test() {
+
+        final Lock lock = new Lock();
+        final Condition2 empty = new Condition2(lock);
+        final LinkedList<Integer> list = new LinkedList<>();
+
+        KThread consumer = new KThread( new Runnable () {
+            public void run() {
+                lock.acquire();
+                while(list.isEmpty()){
+                    empty.sleep();
+                }
+
+                Lib.assertTrue(list.size() == 5, "List should have 5 values.");
+
+                while(!list.isEmpty()) {
+                    // context swith for the fun of it
+                    KThread.yield();
+                    System.out.println("Removed " + list.removeFirst());
+                }
+                lock.release();
+            }
+        });
+
+        KThread producer = new KThread( new Runnable () {
+            public void run() {
+                lock.acquire();
+                for (int i = 0; i < 5; i++) {
+                    list.add(i);
+                    System.out.println("Added " + i);
+                    // context swith for the fun of it
+                    KThread.yield();
+                }
+                empty.wake();
+                lock.release();
+            }
+        });
+
+        consumer.setName("Consumer");
+        producer.setName("Producer");
+
+        consumer.fork();
+        producer.fork();
+
+        consumer.join();
+        producer.join();
+    }
+
+    public static void selfTest() {
+        System.out.println();
+        System.out.println("Condition 2 Test >>>>>>> ");
+        Condition2Test();
+    }
+
+    final LinkedList<KThread> waitQueue;
+    final Lock conditionLock;
 }

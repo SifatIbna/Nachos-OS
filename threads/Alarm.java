@@ -2,6 +2,9 @@ package nachos.threads;
 
 import nachos.machine.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Uses the hardware timer to provide preemption, and to allow threads to sleep
  * until a certain time.
@@ -15,9 +18,11 @@ public class Alarm {
      * alarm.
      */
     public Alarm() {
-	Machine.timer().setInterruptHandler(new Runnable() {
-		public void run() { timerInterrupt(); }
-	    });
+        threadMap = new HashMap<KThread, Long>();
+
+        Machine.timer().setInterruptHandler(new Runnable() {
+            public void run() { timerInterrupt(); }
+        });
     }
 
     /**
@@ -27,7 +32,20 @@ public class Alarm {
      * that should be run.
      */
     public void timerInterrupt() {
-	    KThread.currentThread().yield();
+
+        long currentTime = Machine.timer().getTime();
+
+         for (Map.Entry<KThread, Long> entry : threadMap.entrySet()) {
+             KThread thread = entry.getKey();
+             Long value = entry.getValue();
+
+             if (value <= currentTime){
+                 thread.ready();
+                 threadMap.remove(thread);
+             }
+         }
+
+	    KThread.yield();
     }
 
     /**
@@ -44,10 +62,47 @@ public class Alarm {
      *
      * @see	nachos.machine.Timer#getTime()
      */
+
     public void waitUntil(long x) {
-	// for now, cheat just to get something working (busy waiting is bad)
-	long wakeTime = Machine.timer().getTime() + x;
-	while (wakeTime > Machine.timer().getTime())
-	    KThread.yield();
+
+        //long wakeTime = Machine.timer().getTime() + x;
+        //while (wakeTime > Machine.timer().getTime())
+        //	KThread.yield();
+
+        //get wake time
+        if(x > 0)
+        {
+            long wakeTime = Machine.timer().getTime() + x;
+//            System.out.println(wakeTime);
+            Machine.interrupt().setStatus(false);
+            KThread currentThread = KThread.currentThread();
+            threadMap.put(currentThread, wakeTime);
+            currentThread.sleep();
+            Machine.interrupt().restore(true);
+        }
+
     }
+
+    public static void alarmTest() {
+        int [] times  = {100, 10*100, 100*1000};
+
+        long initialTime, finishTime;
+
+        for (int d : times) {
+            initialTime = Machine.timer().getTime();
+//             new Alarm().waitUntil(d); // Doesn't Work
+            ThreadedKernel.alarm.waitUntil(d);
+            finishTime = Machine.timer().getTime();
+            System.out.println ("Waiting for " + (finishTime - initialTime) + " ticks");
+        }
+    }
+
+    public static void selfTest() {
+        System.out.println();
+        System.out.println("Alarm Test >>>>>:");
+        alarmTest();
+        // Invoke your other test methods here ...
+    }
+
+    final HashMap<KThread, Long> threadMap;
 }

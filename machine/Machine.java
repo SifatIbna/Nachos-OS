@@ -67,6 +67,7 @@ public final class Machine {
      * Yield to non-Nachos threads. Use in non-preemptive JVM's to give
      * non-Nachos threads a chance to run.
      */
+
     public static void yield() {
 	Thread.yield();
     }

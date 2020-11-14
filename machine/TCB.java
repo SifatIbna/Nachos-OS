@@ -131,6 +131,7 @@ public final class TCB {
      * become the new current TCB. It is acceptable for this TCB to be the
      * current TCB.
      */
+
     public void contextSwitch() {
 	/* Probably unnecessary sanity check: we make sure that the current
 	 * thread is bound to the current TCB. This check can only fail if
@@ -167,6 +168,7 @@ public final class TCB {
      * This TCB must also have been authorized to be destroyed by the
      * autograder.
      */
+
     public void destroy() {
 	// make sure the current TCB is correct
 	Lib.assertTrue(currentTCB != null &&
