@@ -525,8 +525,8 @@ public class UserProcess {
         return 0;
     }
 
-    private int handleExec(int vAddr, int numofPages, int startVAddr) {
-        if(vAddr<0||numofPages<0||startVAddr<0){
+    private int handleExec(int vAddr, int numberOfArguments, int startVAddr) {
+        if(vAddr<0||numberOfArguments<0||startVAddr<0){
             Lib.debug(dbgProcess, "Error in function handleExec - address out of range");
             return -1;
         }
@@ -540,10 +540,10 @@ public class UserProcess {
             Lib.debug(dbgProcess, "Error in function handleExec - unknown file type : "+ext[ext.length-1]);
             return -1;
         }
-        String[] pages=new String[numofPages];
+        String[] arguments=new String[numberOfArguments];
         byte[] buffer;
         int readLength;
-        for(int i=0;i<numofPages;i++){
+        for(int i=0;i<numberOfArguments;i++){
             buffer=new byte[4];
             readLength=readVirtualMemory((4*i)+startVAddr,buffer);
             if(readLength!=4){
@@ -556,10 +556,10 @@ public class UserProcess {
                 Lib.debug(dbgProcess, "Error in function handleExec - Reading .Coff file failed");
                 return -1;
             }
-            pages[i]=arg;
+            arguments[i]=arg;
         }
         UserProcess child=UserProcess.newUserProcess();
-        boolean isSuccessful=child.execute(fileName, pages);
+        boolean isSuccessful=child.execute(fileName, arguments);
         if(!isSuccessful){
             Lib.debug(dbgProcess, "handleExec:Execute child process failed");
             return -1;
