@@ -722,7 +722,7 @@ public class UserProcess {
     }
 
     private boolean allocate(int vpn, int desiredPages, boolean readOnly) {
-        LinkedList<TranslationEntry> allocated = new LinkedList<TranslationEntry>();
+        List<TranslationEntry> allocated = new ArrayList<>();
 
         for (int i = 0; i < desiredPages; ++i) {
             if (vpn >= pageTable.length)

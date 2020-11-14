@@ -7,7 +7,7 @@ int main(int argc, char** argv)
    
     char buf[30];
    
-    printf("Hello world\n");
+    printf("Hello world\nPress Enter");
 	readline(buf, 10);
     printf("Enter a number: ");
     readline(buf, 10);
