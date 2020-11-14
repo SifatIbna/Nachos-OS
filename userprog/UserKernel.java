@@ -124,6 +124,26 @@ public class UserKernel extends ThreadedKernel {
 	super.terminate();
     }
 
+    protected static boolean deletePage(int ppn) {
+
+    	pageLock.acquire();
+		availablePages.add(ppn);
+		pageLock.release();
+
+		return true;
+	}
+
+	protected static int newPage() {
+		int ret = -1;
+
+		pageLock.acquire();
+		if (availablePages.size() > 0)
+			ret = availablePages.removeFirst();
+		pageLock.release();
+
+		return ret;
+	}
+
     /** Globally accessible reference to the synchronized console. */
     public static SynchConsole console;
 
