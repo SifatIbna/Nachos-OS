@@ -72,7 +72,7 @@ public final class Machine {
 	Thread.yield();
     }
 
-    /**
+    /**	
      * Terminate Nachos. Same as <tt>TCB.die()</tt>.
      */
     public static void terminate() {

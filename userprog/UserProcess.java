@@ -174,7 +174,7 @@ public class UserProcess {
 
         // for now, just assume that virtual addresses equal physical addresses
 //        if (vaddr < 0 || vaddr >= memory.length)
-//            return 0;
+//            return -1;
 
         int amount = Math.min(length, memory.length - vaddr);
 
@@ -243,7 +243,7 @@ public class UserProcess {
 
         // for now, just assume that virtual addresses equal physical addresses
 //        if (vaddr < 0 || vaddr >= memory.length)
-//            return 0;
+//            return -1;
 
         int amount = Math.min(length, memory.length - vaddr);
 
@@ -535,7 +535,7 @@ public class UserProcess {
             Lib.debug(dbgProcess, "Error in function handleExec - No filename given");
             return -1;
         }
-        if(!fileName.contains(".coff")){
+        if(!fileName.endsWith(".coff")){
             String [] ext = fileName.split(".");
             Lib.debug(dbgProcess, "Error in function handleExec - unknown file type : "+ext[ext.length-1]);
             return -1;
@@ -642,6 +642,9 @@ public class UserProcess {
         } else if (descriptorIndex < 0 || descriptorIndex > descriptorSize - 1) {
             Lib.debug(dbgProcess, "Error in function handleWrite() - Descriptor value > descriptor array length");
             return -1;
+        } else if(vaddr<0){
+            Lib.debug(dbgProcess, "Error in function handleWrite() - Virtual address is negative");
+            return -1;
         }
         OpenFile writeFile;
         if (descriptors[descriptorIndex] == null) {
@@ -669,6 +672,9 @@ public class UserProcess {
             return -1;
         } else if (descriptorIndex < 0 || descriptorIndex > descriptorSize - 1) {
             Lib.debug(dbgProcess, "Error in function handleRead - Descriptor value > descriptor array length");
+            return -1;
+        }else if(vaddr<0){
+            Lib.debug(dbgProcess, "Error in function handleWrite() - Virtual address is negative");
             return -1;
         }
         OpenFile readFile;
